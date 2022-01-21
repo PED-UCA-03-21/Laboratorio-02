@@ -17,15 +17,35 @@ class SimpleList {
       return p->value + _sum(p->next);
     }
 
+    Node *_getLastNode(Node *p) {
+      if(!p) return NULL;
+
+      if(!p->next) {
+        return p;
+      }else {
+        return _getLastNode(p->next);
+      }
+    }
+
+    void _inverted(Node *listNode, SimpleList *newList) {
+      if(!listNode) return;
+
+      if(listNode->next) {
+        _inverted(listNode->next, newList);
+      }
+      
+      newList->insert(listNode->value);
+    }
+
   public:
     SimpleList();
     int sum();
     void insert(int value);
     void printData();
     void concatList(SimpleList l);
-    void inverted(Node *p, SimpleList newList);
+    SimpleList inverted();
     string toString();
-    Node *getLastNode(Node *p);
+    Node *getLastNode();
     Node *getHead();
 };
 
@@ -34,14 +54,8 @@ SimpleList::SimpleList() {
   head = NULL;
 }
 
-Node *SimpleList::getLastNode(Node *p) {
-  if(!p) return NULL;
-
-  if(!p->next) {
-    return p;
-  }else {
-    getLastNode(p->next);
-  }
+Node *SimpleList::getLastNode() {
+  return _getLastNode(head);
 }
 
 Node *SimpleList::getHead() {
@@ -84,15 +98,15 @@ string SimpleList::toString() {
 
   if(!n) return "";
 
-  string result = "Data [ " + n->value;
+  string result = "Data [ " + to_string(n->value);
   n = n->next;
 
   while (n) {
-    result += " -> " + n->value;
+    result = result + " -> " + to_string(n->value);
     n = n->next;
   }
 
-  result += " ]";
+  result = result + " ]";
 
   return result;
 }
@@ -115,7 +129,7 @@ int SimpleList::sum() {
 }
 
 void SimpleList::concatList(SimpleList l) {
-  Node *lastOwnNode = getLastNode(head);
+  Node *lastOwnNode = getLastNode();
   Node *headSecondList = l.getHead();
 
   if(!lastOwnNode) {
@@ -125,19 +139,56 @@ void SimpleList::concatList(SimpleList l) {
   }
 }
 
-void SimpleList::inverted(Node* listNode, SimpleList newList) {
-  if(!listNode) return;
+SimpleList SimpleList::inverted() {
+  SimpleList invertedList = SimpleList();
 
-  if(listNode->next) {
-    inverted(listNode->next, newList);
-  }
-   
-  newList.insert(listNode->value);
+  _inverted(head, &invertedList);
+  return invertedList;
 }
 
 int main() {
 
+  SimpleList l1 = SimpleList();
+  SimpleList l2 = SimpleList();
 
+  cout << "INGRESE LOS VALORES DE LA LISTA 1" << endl;
+
+  int dato;
+
+  while(cin >> dato) {
+    l1.insert(dato);
+  }
+
+  l1.printData();
+
+  string listString = l1.toString();
+  cout << listString << endl;
+
+  int listSum = l1.sum();
+  cout << "La Suma de todos los valores es: " << listSum << endl;
+
+  cout << "INGRESE LOS VALORES DE LA LISTA 2" << endl;
+
+  for(int i=0; i < 10; i++) {
+    l2.insert(i);
+  }
+
+  l2.printData(); 
+
+  cout << "Concatenando..." << endl;
+
+  l1.concatList(l2);
+
+  cout << "Lista 1: ";
+  l1.printData();
+
+  cout << "Invirtiendo las listas" << endl;
+
+  SimpleList invL1 = l1.inverted();
+  SimpleList invL2 = l2.inverted();
+
+  cout << "L1: " << invL1.toString() << endl;
+  cout << "L2: " << invL2.toString() << endl;
 
   return 0;
 }
