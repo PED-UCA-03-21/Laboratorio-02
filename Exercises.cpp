@@ -37,6 +37,28 @@ class SimpleList {
       nl->insert(p->value);
     }
 
+    /**
+     * Recursive fuction to alternate values in a new list
+     */
+
+    void _alternate(Node *l1, Node *l2, SimpleList *nl) {
+      if (!l1 && !l2) return;
+
+      Node *n1 = NULL, *n2 = NULL;
+
+      if(l1) {
+        nl->insert(l1->value);
+        n1 = l1->next;
+      }
+
+      if(l2) {
+        nl->insert(l2->value);
+        n2 = l2->next;
+      }
+
+      _alternate(n1, n2, nl);
+    }
+
   public:
     SimpleList();
     void insert(int value);
@@ -47,6 +69,7 @@ class SimpleList {
     Node *getHead();
     Node *getTail();
     SimpleList inverted();
+    SimpleList alternate(SimpleList toAlternate);
 };
 
 SimpleList::SimpleList() {
@@ -125,10 +148,24 @@ SimpleList SimpleList::inverted() {
   return result;
 }
 
+/**
+ * Calling function  that execute recursive function with init values.
+ */
+
+SimpleList SimpleList::alternate(SimpleList toAlternate) {
+  SimpleList nl = SimpleList();
+  Node *l2Head = toAlternate.getHead();
+
+  _alternate(head, l2Head, &nl);
+
+  return nl;
+}
+
 
 int main() {
   SimpleList l1 = SimpleList();
   SimpleList l2 = SimpleList();
+  SimpleList l3 = SimpleList();
 
   int data;
 
@@ -149,6 +186,12 @@ int main() {
     l2.insert(i*2);
   }
   cout << "L2: " << l2.toString() << endl << endl;
+  
+  cout << "------ Lista 3 ------" << endl;
+  for(int i=10; i>=0; i--) {
+    l3.insert(i*3);
+  }
+  cout << "L3: " << l3.toString() << endl << endl;
 
   cout << "Concatenado..." << endl;
   l1.concat(l2);
@@ -158,6 +201,12 @@ int main() {
   SimpleList l1Inv = l1.inverted();
   cout << "L1: " << l1.toString() << endl;
   cout << "LI: " << l1Inv.toString() << endl << endl;
+  
+  cout << "Alternado..." << endl;
+  SimpleList alternatedList = l2.alternate(l3);
+  cout << "L2: " << l2.toString() << endl;
+  cout << "L2: " << l3.toString() << endl;
+  cout << "LA: " << alternatedList.toString() << endl << endl;
 
   return 0;
 }
